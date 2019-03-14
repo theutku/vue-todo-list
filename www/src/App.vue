@@ -1,17 +1,26 @@
 <template>
 	<div id="app">
+		<Error v-if="error" v-bind:errorMsg="error" />
 		<Header />
 		<router-view />
 	</div>
 </template>
 
 <script>
+	import { mapState } from 'vuex';
 	import Header from './components/layout/Header';
+	import Error from './components/layout/Error';
 
 	export default {
 		name: 'app',
 		components: {
-			Header
+			Header,
+			Error
+		},
+		computed: {
+			...mapState([
+				'error'
+			])
 		}
 	}
 </script>
