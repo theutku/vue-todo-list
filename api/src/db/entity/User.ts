@@ -1,7 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
 import { UserRole } from './UserRole';
-import { Patient } from './Patient';
-import { Reminder } from './Reminder';
 import * as bcrypt from 'bcryptjs';
 import { RegisterUser } from '../models/user';
 
@@ -38,20 +36,6 @@ export class User extends BaseEntity {
 
 	@ManyToOne(type => UserRole, userRole => userRole.users)
 	role: UserRole;
-
-	@OneToMany(type => Patient, patient => patient.user, {
-		cascade: true,
-		onDelete: 'CASCADE'
-	})
-	patients: Patient[];
-
-	@OneToMany(type => Reminder, reminder => reminder.user, {
-		cascade: true,
-		onDelete: 'CASCADE'
-	})
-	reminders: Reminder[];
-
-
 
 
 	fillProps(registerModel: RegisterUser) {

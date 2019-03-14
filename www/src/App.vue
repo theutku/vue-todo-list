@@ -7,7 +7,7 @@
 </template>
 
 <script>
-	import { mapState } from 'vuex';
+	import { mapState, mapMutations } from 'vuex';
 	import Header from './components/layout/Header';
 	import Error from './components/layout/Error';
 
@@ -21,6 +21,14 @@
 			...mapState([
 				'error'
 			])
+		},
+		methods: {
+			...mapMutations([
+				'SET_USER_FROM_LOCAL_STORAGE'
+			])
+		},
+		created() {
+			this.SET_USER_FROM_LOCAL_STORAGE();
 		}
 	}
 </script>
