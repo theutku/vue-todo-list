@@ -27,12 +27,26 @@
 </template>
 
 <script>
+	import { mapActions } from 'vuex';
+
 	export default {
 		name: 'Login',
 		data() {
 			return {
 				email: '',
 				password: ''
+			}
+		},
+		methods: {
+			...mapActions([
+				'login'
+			]),
+			tryLogin: function () {
+				const model = {
+					email: this.email,
+					password: this.password
+				}
+				this.login(model);
 			}
 		}
 	}
