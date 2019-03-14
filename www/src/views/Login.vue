@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<form @submit.prevent="login">
+		<form @submit.prevent="tryLogin">
 			<div class="imgcontainer">
 				<img src="@/assets/login_icon.png" alt="Login Icon" class="avatar">
 			</div>
