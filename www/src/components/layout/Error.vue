@@ -69,6 +69,8 @@
 		border-radius: 4px;
 		max-width: 500px;
 		top: 0px;
+		z-index: 99999;
+		opacity: 1;
 		box-shadow: 1px 7px 14px -5px rgba(0, 0, 0, 0.2);
 	}
 
