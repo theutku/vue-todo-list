@@ -41,6 +41,9 @@
 <style scoped>
 	form {
 		border: 3px solid #f1f1f1;
+		width: 50%;
+		margin: 0 auto;
+		margin-top: 3rem;
 	}
 
 	input[type="email"],
