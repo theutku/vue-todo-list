@@ -4,13 +4,27 @@ import axios from 'axios';
 import config from './config';
 import Auth from './auth';
 import router from './router';
+import UndoRedoManager from './undoRedoManager';
 
 Vue.use(Vuex);
+
+const undoRedoHistory = new UndoRedoManager();
+
+const undoRedoPlugin = (store) => {
+    undoRedoHistory.init(store);
+    let firstState = _.cloneDeep(store.state);
+    undoRedoHistory.addState(firstState);
+
+    store.subscribe((mutation, state) => {
+        undoRedoHistory.addState(_.cloneDeep(state));
+    });
+}
 
 export default new Vuex.Store({
     state: {
         currentUser: null,
         error: null,
+        todos: []
     },
     getters: {
         currentUser: state => {
@@ -45,6 +59,21 @@ export default new Vuex.Store({
                 state.currentUser = null;
             }
         },
+        SET_TODOS: (state, todoList) => {
+            state.todos = todoList;
+        },
+        DELETE_TODO: (state, id) => {
+            state.todos = state.todos.filter(todo => todo.id !== id);
+        },
+        ADD_TODO: (state, newTodo) => {
+            state.todos = [...state.todos, res.data];
+        },
+        UNDO: state => {
+            undoRedoHistory.undo();
+        },
+        REDO: state => {
+            undoRedoHistory.redo();
+        }
     },
     actions: {
         login: (context, loginModel) => {
@@ -58,6 +87,34 @@ export default new Vuex.Store({
         logout: ({ commit }) => {
             commit('REMOVE_USER');
             router.push('/login');
+        },
+        getTodos: ({ commit }) => {
+            axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5').then(res => {
+                let todos = res.data;
+                commit('SET_TODOS', todos);
+            }).catch(err => {
+                context.commit('SHOW_ERROR', 'Unable to get ToDo List');
+            });
+        },
+        deleteToDo: (context, id) => {
+            axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`).then((res) => {
+                context.commit('DELETE_TODO', id);
+            }).catch(err => {
+                context.commit('SHOW_ERROR', 'Error deleting ToDo item.');
+            });
+        },
+        addToDo: (context, newTodo) => {
+            const { title, completed } = newTodo;
+            axios.post('https://jsonplaceholder.typicode.com/todos', {
+                title,
+                completed
+            }).then((res) => {
+                const addedTodo = res.data;
+                context.commit('ADD_TODO', addedTodo);
+            }).catch(err => {
+                context.commit('SHOW_ERROR', 'Error creating ToDo item.');
+            });
         }
-    }
+    },
+    plugins: [undoRedoPlugin]
 });

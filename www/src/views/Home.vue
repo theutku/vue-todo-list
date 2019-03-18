@@ -1,11 +1,14 @@
 <template>
 	<div>
-		<AddToDo v-on:add-todo="addToDo" />
-		<Todos v-bind:todos="todos" v-on:del-emit="deleteTodo" />
+		<AddToDo v-on:add-todo="tryAddToDo" />
+		<Todos v-bind:todos="todos" v-on:del-emit="tryDeleteTodo" />
+		<button @click="undo">UNDO</button>
+		<button @click="redo">REDO</button>
 	</div>
 </template>
 
 <script>
+	import { mapMutations, mapState, mapActions } from 'vuex';
 	import axios from 'axios';
 	import Todos from '../components/Todos';
 	import AddToDo from '../components/AddToDo';
@@ -16,31 +19,36 @@
 			Todos,
 			AddToDo
 		},
-		methods: {
-			deleteTodo(id) {
-				axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`).then((res) => {
-					this.todos = this.todos.filter(todo => todo.id !== id);
-				}).catch(err => console.log(err));
-			},
-			addToDo(newTodo) {
-				const { title, completed } = newTodo;
-				axios.post('https://jsonplaceholder.typicode.com/todos', {
-					title,
-					completed
-				}).then((res) => {
-					this.todos = [...this.todos, res.data];
-				}).catch(err => console.log(err));
-			}
+		computed: {
+			...mapState([
+				'todos'
+			])
 		},
-		data() {
-			return {
-				todos: []
+		methods: {
+			...mapMutations([
+				'UNDO',
+				'REDO'
+			]),
+			...mapActions([
+				'getTodos',
+				'deleteToDo',
+				'addToDo'
+			]),
+			tryDeleteTodo(id) {
+				this.deleteToDo(id);
+			},
+			tryAddToDo(newTodo) {
+				this.addToDo(newTodo);
+			},
+			undo() {
+				this.UNDO();
+			},
+			redo() {
+				this.REDO();
 			}
 		},
 		created() {
-			axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5').then(res => {
-				this.todos = res.data;
-			}).catch(err => console.log(err));
+			this.getTodos();
 		}
 	}
 </script>

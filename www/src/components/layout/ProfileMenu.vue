@@ -20,7 +20,7 @@
 			tryLogout() {
 				this.logout();
 			}
-        }
+		}
 	}
 </script>
 
