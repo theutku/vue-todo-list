@@ -10,9 +10,9 @@ export default class UndoRedoManager {
     }
 
     addState(state) {
-        if (this.currentIndex + 1 < this.history.length) {
-            this.history.splice(this.currentIndex + 1);
-        }
+        // if (this.currentIndex + 1 < this.history.length) {
+        //     this.history.splice(this.currentIndex + 1);
+        // }
         this.history.push(state);
         this.currentIndex++;
     }
@@ -24,7 +24,7 @@ export default class UndoRedoManager {
     }
 
     redo() {
-        const nextState = this.history[this.currentIndex + 1];
+        const nextState = this.history[this.currentIndex];
         this.store.replaceState(_.cloneDeep(nextState));
         this.currentIndex++;
     }
