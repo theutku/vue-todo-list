@@ -14,7 +14,7 @@ export default class UndoRedoManager {
         // if (this.currentIndex + 1 < this.history.length) {
         //     this.history.splice(this.currentIndex + 1);
         // }
-        if(!this.undoRedo) {
+        if (!this.undoRedo) {
             this.history.push(state);
             this.currentIndex++;
         }
@@ -23,15 +23,19 @@ export default class UndoRedoManager {
 
     undo() {
         const prevState = this.history[this.currentIndex - 1];
-        this.store.replaceState(_.cloneDeep(prevState));
-        this.currentIndex--;
-        this.undoRedo = true;
+        if (prevState) {
+            this.store.replaceState(_.cloneDeep(prevState));
+            this.currentIndex--;
+            this.undoRedo = true;
+        }
     }
 
     redo() {
         const nextState = this.history[this.currentIndex + 1];
-        this.store.replaceState(_.cloneDeep(nextState));
-        this.currentIndex++;
-        this.undoRedo = true;
+        if (nextState) {
+            this.store.replaceState(_.cloneDeep(nextState));
+            this.currentIndex++;
+            this.undoRedo = true;
+        }
     }
 }
