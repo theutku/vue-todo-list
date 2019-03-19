@@ -4,6 +4,7 @@ export default class UndoRedoManager {
     store;
     history = [];
     currentIndex = -1;
+    undoRedo = false;
 
     init(store) {
         this.store = store;
@@ -13,19 +14,24 @@ export default class UndoRedoManager {
         // if (this.currentIndex + 1 < this.history.length) {
         //     this.history.splice(this.currentIndex + 1);
         // }
-        this.history.push(state);
-        this.currentIndex++;
+        if(!this.undoRedo) {
+            this.history.push(state);
+            this.currentIndex++;
+        }
+        this.undoRedo = false;
     }
 
     undo() {
         const prevState = this.history[this.currentIndex - 1];
         this.store.replaceState(_.cloneDeep(prevState));
         this.currentIndex--;
+        this.undoRedo = true;
     }
 
     redo() {
-        const nextState = this.history[this.currentIndex];
+        const nextState = this.history[this.currentIndex + 1];
         this.store.replaceState(_.cloneDeep(nextState));
         this.currentIndex++;
+        this.undoRedo = true;
     }
 }
